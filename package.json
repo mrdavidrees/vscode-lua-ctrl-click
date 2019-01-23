@@ -4,6 +4,7 @@
 	"publisher": "Dr-Roboto",
 	"description": "Helps resolve links to class files",
 	"version": "0.2.0",
+	"repository": "https://github.com/mrdavidrees/vscode-lua-ctrl-click",
 	"engines": {
 		"vscode": "^1.30.0"
 	},
