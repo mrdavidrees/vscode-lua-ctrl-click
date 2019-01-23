@@ -3,7 +3,7 @@
 	"displayName": "lua-ctrl-click",
 	"publisher": "Dr-Roboto",
 	"description": "Helps resolve links to class files",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"engines": {
 		"vscode": "^1.30.0"
 	},
