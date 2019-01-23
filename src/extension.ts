@@ -9,44 +9,56 @@ import * as fs from 'fs';
 export function activate(context: vscode.ExtensionContext) {
 
 	let sel: vscode.DocumentSelector = { scheme: 'file',language: 'lua' };
-	let disposable2 = vscode.languages.registerDocumentLinkProvider(sel, new DocumentLinkProvider());
-    context.subscriptions.push(disposable2)
+    context.subscriptions.push(vscode.languages.registerDocumentLinkProvider(sel, new DocumentLinkProvider()));
+
+    let fileSystemWatcher = vscode.workspace.createFileSystemWatcher('**/*.lua', false, true, false);
+    context.subscriptions.push(fileSystemWatcher.onDidCreate((filePath) => {
+        // console.log(filePath + " create!");
+        fileMap = readFileMap(basepath);
+    }));
+    context.subscriptions.push(fileSystemWatcher.onDidDelete((filePath) => {
+        // console.log(filePath + " delete!");
+        fileMap = readFileMap(basepath);
+    }));
+
+    fileMap = readFileMap(basepath);
     
 }
+
 
 // this method is called when your extension is deactivated
 export function deactivate() {}
 
+function readFileMap(folder: string): {} {
+    let paths = {}
+    let files = fs.readdirSync(folder)
+    files.forEach(path => {
+        let fullPath = folder + "/" + path
+        if (!fs.lstatSync(fullPath).isDirectory()) {
+            paths[path] = fullPath
+        }
+        else if (path.substr(0, 1) != ".") {
+            let red = readFileMap(fullPath)
+            Object.keys(red).forEach(k => {
+                paths[k] = red[k]
+            })
+        }
+    });
+    return paths
+}
 
+
+var fileMap = {}
 let basepath = vscode.workspace.rootPath;
 let pattern = /(?:[\\s^\W])((?:[A-Z](?:[a-zA-Z]+))(?=[.:(]))+/g
 
 export class DocumentLinkProvider implements vscode.DocumentLinkProvider {
 
-    public read(folder: string): {} {
-        
-        let paths = {}
-        let files = fs.readdirSync(folder)
-        files.forEach(path => {
-            let fullPath = folder + "/" + path
-            if (!fs.lstatSync(fullPath).isDirectory()) {
-                paths[path] = fullPath
-            }
-            else if (path.substr(0, 1) != ".") {
-                let red = this.read(fullPath)
-                Object.keys(red).forEach(k => {
-                    paths[k] = red[k]
-                })
-            }
-        });
-        return paths
-    }
-
+    
     public provideDocumentLinks(doc: vscode.TextDocument, token: vscode.CancellationToken): vscode.ProviderResult<vscode.DocumentLink[]> {
 		let documentLinks: vscode.ProviderResult<vscode.DocumentLink[]> = [];
         let line_idx = 0;
-
-        let fileMap = this.read(basepath);
+        
 
         while (line_idx < doc.lineCount) {
             let line = doc.lineAt(line_idx);
@@ -70,6 +82,4 @@ export class DocumentLinkProvider implements vscode.DocumentLinkProvider {
         }
         return documentLinks;
 	}
-	
-	
 }
