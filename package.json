@@ -15,19 +15,6 @@
 		"*"
 	],
 	"main": "./out/extension.js",
-	"contributes": {
-		"languages": [
-			{
-				"id": "lua-ctrl-click",
-				"extensions": [
-					".lua"
-				],
-				"aliases": [
-					"Lua"
-				]
-			}
-		]
-	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
 		"compile": "tsc -p ./",
