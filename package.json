@@ -30,5 +30,37 @@
 	},
 	"dependencies": {
 		"vscode-languageclient": "^5.2.1"
+	},
+	"contributes": {
+		"configuration": {
+			"type": "object",
+			"title": "Language Associator configuration",
+			"properties": {
+				"lua-ctrl-click.associations": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"title": "Patterns to match",
+						"properties": {
+							"pattern": {
+								"type": "string",
+								"description": "Pattern to test the first line."
+							},
+							"language": {
+								"type": "string",
+								"description": "Language to apply to matching files."
+							}
+						}
+					},
+					"default": [
+						{
+							"pattern": "^--lua$",
+							"language": "lua"
+						}
+					],
+					"description": "Automatically set the language of extensionless files by matching the first line (similar to checking a shebang '#!/bin/bash' but it can be any pattern)"
+				}
+			}
+		}
 	}
 }
